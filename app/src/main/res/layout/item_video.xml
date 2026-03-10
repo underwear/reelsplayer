@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:use_controller="false"
+        app:resize_mode="fit" />
+
+    <ImageView
+        android:id="@+id/pauseIcon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center"
+        android:src="@android:drawable/ic_media_pause"
+        android:background="#73000000"
+        android:padding="16dp"
+        android:visibility="gone"
+        android:importantForAccessibility="no" />
+
+    <!-- Speed overlay -->
+    <TextView
+        android:id="@+id/speedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="2x"
+        android:textSize="32sp"
+        android:textColor="#55FFFFFF"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <!-- Progress bar track (background) -->
+    <View
+        android:id="@+id/progressTrack"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="bottom"
+        android:background="#33FFFFFF" />
+
+    <!-- Progress bar fill -->
+    <View
+        android:id="@+id/progressFill"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="bottom"
+        android:transformPivotX="0dp"
+        android:scaleX="0"
+        android:background="#88FFFFFF" />
+
+</FrameLayout>
