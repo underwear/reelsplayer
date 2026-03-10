@@ -3,7 +3,6 @@ package com.reelsplayer
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -35,6 +34,8 @@ class VideoAdapter(
         val progressFill: View = view.findViewById(R.id.progressFill)
         var player: ExoPlayer? = null
         var pendingHideRunnable: Runnable? = null
+        var longPressRunnable: Runnable? = null
+        var isSpeedMode = false
         var attachedPosition: Int = RecyclerView.NO_POSITION
     }
 
@@ -80,63 +81,53 @@ class VideoAdapter(
     }
 
     private fun setupTouchListener(holder: VideoViewHolder) {
-        var isSpeedMode = false
-        var longPressRunnable: Runnable? = null
+        // Click listener for tap-to-pause — works regardless of OnTouchListener return value
+        holder.playerView.isClickable = true
+        holder.playerView.setOnClickListener {
+            if (!holder.isSpeedMode) handleTap(holder)
+        }
 
-        val gestureDetector = GestureDetector(holder.itemView.context,
-            object : GestureDetector.SimpleOnGestureListener() {
-                override fun onSingleTapUp(e: MotionEvent): Boolean {
-                    handleTap(holder)
-                    return true
-                }
-            }
-        )
-
+        // Touch listener for x2 speed — always returns false so ViewPager2 can swipe
         holder.playerView.setOnTouchListener { v, event ->
-            gestureDetector.onTouchEvent(event)
-
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    isSpeedMode = false
+                    holder.isSpeedMode = false
                     val inRightZone = event.x > v.width * 0.67f
                     if (inRightZone) {
-                        longPressRunnable = Runnable {
-                            isSpeedMode = true
-                            // Tell ViewPager2 to not intercept while in speed mode
+                        val runnable = Runnable {
+                            holder.isSpeedMode = true
+                            // Now lock touch to us — ViewPager2 won't intercept anymore
                             v.parent?.requestDisallowInterceptTouchEvent(true)
                             holder.player?.playbackParameters = PlaybackParameters(2f)
                             holder.speedLabel.visibility = View.VISIBLE
                         }
-                        handler.postDelayed(longPressRunnable!!, 300)
+                        holder.longPressRunnable = runnable
+                        handler.postDelayed(runnable, 300)
                     }
-                    // Return false so ViewPager2 can still intercept for swipes
-                    false
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    if (!isSpeedMode) {
-                        // Cancel long press if still pending — ViewPager2 handles the swipe
-                        longPressRunnable?.let { handler.removeCallbacks(it) }
-                        longPressRunnable = null
+                    if (!holder.isSpeedMode) {
+                        // Not yet in speed mode — cancel pending long press
+                        holder.longPressRunnable?.let { handler.removeCallbacks(it) }
+                        holder.longPressRunnable = null
                     }
-                    false
                 }
 
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                    longPressRunnable?.let { handler.removeCallbacks(it) }
-                    longPressRunnable = null
+                    holder.longPressRunnable?.let { handler.removeCallbacks(it) }
+                    holder.longPressRunnable = null
 
-                    if (isSpeedMode) {
+                    if (holder.isSpeedMode) {
                         holder.player?.playbackParameters = PlaybackParameters(1f)
                         holder.speedLabel.visibility = View.GONE
-                        isSpeedMode = false
+                        holder.isSpeedMode = false
                         v.parent?.requestDisallowInterceptTouchEvent(false)
                     }
-                    false
                 }
-
-                else -> false
             }
+            // Always false — let ViewPager2 handle swipes, let clickListener handle taps
+            false
         }
     }
 
@@ -163,8 +154,11 @@ class VideoAdapter(
     override fun onViewDetachedFromWindow(holder: VideoViewHolder) {
         super.onViewDetachedFromWindow(holder)
         val position = holder.attachedPosition
+        holder.longPressRunnable?.let { handler.removeCallbacks(it) }
+        holder.longPressRunnable = null
         holder.pendingHideRunnable?.let { handler.removeCallbacks(it) }
         holder.pendingHideRunnable = null
+        holder.isSpeedMode = false
         holder.player?.release()
         holder.player = null
         holder.playerView.player = null
@@ -232,6 +226,7 @@ class VideoAdapter(
         progressRunnable?.let { handler.removeCallbacks(it) }
         progressRunnable = null
         for ((_, holder) in attachedHolders) {
+            holder.longPressRunnable?.let { handler.removeCallbacks(it) }
             holder.pendingHideRunnable?.let { handler.removeCallbacks(it) }
             holder.player?.release()
             holder.player = null
