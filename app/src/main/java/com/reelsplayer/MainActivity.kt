@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateHud(position: Int) {
         if (position < 0 || position >= videoFiles.size) return
         hudName.text = videoFiles[position].first
-        hudCounter.text = "${position + 1} / ${videoFiles.size}"
+        hudCounter.text = getString(R.string.counter_format, position + 1, videoFiles.size)
     }
 
     override fun onPause() {

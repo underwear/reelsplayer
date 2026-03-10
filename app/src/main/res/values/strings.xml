@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ReelsPlayer</string>
+    <string name="landing_subtitle">Pick a folder with videos</string>
+    <string name="pick_folder">Pick folder</string>
+    <string name="speed_label">2x</string>
+    <string name="counter_format">%1$d / %2$d</string>
 </resources>
