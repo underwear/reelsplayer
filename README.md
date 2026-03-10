@@ -1,6 +1,6 @@
 # ReelsPlayer
 
-Offline video player for your downloaded Reels, Shorts, and TikToks — swipe through them like you're still on the feed.
+Offline Android video player for your downloaded Reels, Shorts, and TikToks — swipe through them like you're still on the feed.
 
 Pick a folder, get the full-screen vertical swipe experience.
 
