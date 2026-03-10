@@ -11,13 +11,11 @@ Pick a folder, get the full-screen vertical swipe experience.
 
 ## Features
 
-- **Folder picker** — point at any folder on your device, plays all videos inside
+- **Pick a folder** — plays all videos inside
 - **Vertical swipe** — exactly like Reels/Shorts/TikTok
 - **Tap to pause/play**
-- **Long press right side → 2x speed** — hold to speed up, release to go back to normal
-- **Progress bar** — thin minimal bar at the bottom, like the real thing
-- **Auto-loop** — each video loops until you swipe
-- **Fully offline** — zero network, zero permissions beyond storage access
+- **Long press right side → 2x speed**
+- **Fully offline**
 
 ## Download
 
