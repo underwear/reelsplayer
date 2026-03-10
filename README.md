@@ -4,6 +4,11 @@ Offline video player for your downloaded Reels, Shorts, and TikToks — swipe th
 
 Pick a folder, get the full-screen vertical swipe experience. No internet, no accounts, no tracking. Just your videos.
 
+<p float="left">
+  <img src="demo/landing.jpg" width="250" />
+  <img src="demo/player.jpg" width="250" />
+</p>
+
 ## Features
 
 - **Folder picker** — point at any folder on your device, plays all videos inside
